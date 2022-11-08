@@ -1,1 +1,41 @@
-<p>solving-with-weighting works!</p>
+<section id="citiesTableSection" *ngIf="cities.length > 0">
+    <h4>Destinations</h4>
+    <br>
+    <table>
+        <thead>
+            <tr>
+                <td>City</td>
+                <td>Coordinates(x & y)</td>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr *ngFor="let city of cities">
+                <td>{{city?.name}}</td>
+                <td>{{city?.coordinates?.xCoord}} & {{city?.coordinates?.yCoord}}</td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+
+<section>
+
+    <form [formGroup]="amountsForm">
+        <div>
+            <p>Choose how many destinations you want to genereate in each quadrant.</p>
+            <input type="number" formControlName="amountOfDestinationsInEachQuadrant">
+        </div>
+        <div>
+            <p>Choose how many vehicles you want to generate </p>
+            <input type="number" formControlName="amountOfVehicles">
+        </div>
+        <button (click)="generateDestinationsAndVehicles()">
+            Generate
+        </button>
+    </form>
+</section>
+
+<div *ngIf="cities.length > 0">
+    <button id="solutionButton" (click)="getOptimalSolution()">Search for an optimal solution</button>
+</div>

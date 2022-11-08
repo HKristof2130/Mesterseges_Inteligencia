@@ -6,17 +6,22 @@ import { Vehicle } from '../vehicle types/vehicle.type';
 })
 export class VehicleGeneratorService {
 
-  private _numberOfVehicles : Vehicle[] = [];
+  private _vehicles : Vehicle[] = [];
   constructor() { }
 
-  public get numberOfVehicles() : Vehicle[]{
-    return this._numberOfVehicles;
+  public get vehicles() : Vehicle[]{
+    return this._vehicles;
   }
 
-  addVehicles(amount : number){
-    for(let i = 0 ; i< amount ; i++){
-      this._numberOfVehicles.push( new Vehicle());
+  public addVehicles(amount : number){
+    for(let i = 0 ; i < amount ; i++){
+      this._vehicles.push( new Vehicle());
     }
+  }
+
+  public printOutVehicles(){
+    console.log(this._vehicles);
+    
   }
 
 }

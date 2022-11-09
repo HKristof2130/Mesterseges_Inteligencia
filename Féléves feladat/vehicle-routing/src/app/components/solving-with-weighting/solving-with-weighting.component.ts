@@ -73,13 +73,11 @@ export class SolvingWithWeightingComponent implements OnInit {
     return tmpCities;
   }
 
-  getOptimalSolution() {
+  public getBaseSolution() {
     
-    this.vehicles.forEach( (vehicle : Vehicle) => {
-      vehicle.startingPosition = this.destinationGeneratorService.destinations.get(0)?.coordinates as Coordinate;
-    });
+    this._putVehiclesToStartingPosition();
 
-    this.cities.forEach(city => {
+    this.cities.forEach( (city : City) => {
       
       let lowestDistance : number = Number.POSITIVE_INFINITY;
       let chosenVehiclesIndex : number = -1;
@@ -93,10 +91,31 @@ export class SolvingWithWeightingComponent implements OnInit {
         }
       }
 
-      this.vehicles[chosenVehiclesIndex].move(city.coordinates);
-      this.vehicles[chosenVehiclesIndex].visitedPlaces.push(city);
-      this.vehicles[chosenVehiclesIndex].distanceTaken += lowestDistance;
+      this.vehicles[chosenVehiclesIndex].move(city, lowestDistance);
 
+    });
+
+    this.vehicles.forEach(vehicle => {
+      vehicle.returnToStartingPosition();
+    });
+
+    this.logRoutesAfterBaseSolution();
+
+
+  }
+
+  private _putVehiclesToStartingPosition() : void{
+    this.vehicles.forEach( (vehicle : Vehicle) => {
+      vehicle.startingPosition = this.destinationGeneratorService.destinations.get(0)?.coordinates as Coordinate;
+    });
+  }
+
+  private logRoutesAfterBaseSolution() : void{
+    console.log("Finished with base solution");
+    
+    this.vehicles.forEach(vehicle => {
+      console.log(vehicle);
+      
     });
   }
 

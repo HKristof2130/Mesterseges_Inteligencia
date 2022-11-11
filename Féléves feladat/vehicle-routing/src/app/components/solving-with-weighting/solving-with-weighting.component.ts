@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { City } from 'src/app/city-type/city.type';
-import { Coordinate } from 'src/app/coordinate type/coordinate.type';
 import { DistanceCalculatorService } from 'src/app/services/distance-calculator.service';
 import { DestinatonsGeneratorService } from 'src/app/services/route-generator.service';
 import { VehicleGeneratorService } from 'src/app/services/vehicle-generator.service';
@@ -18,6 +17,7 @@ export class SolvingWithWeightingComponent implements OnInit {
     amountOfDestinationsInEachQuadrant : ["",Validators.required],
     amountOfVehicles: ["", Validators.required],
   });
+  public isBasicSolutionDisplay : boolean = false;
   public cities : Array<City> = [];
   public vehicles : Vehicle[] = [];
 
@@ -40,6 +40,7 @@ export class SolvingWithWeightingComponent implements OnInit {
 
   public generateDestinationsAndVehicles(){
     
+    this.isBasicSolutionDisplay = false;
     if(! this._isFormValid()){
       alert("Stg wrong with the inputs");
       return;
@@ -101,6 +102,7 @@ export class SolvingWithWeightingComponent implements OnInit {
       vehicle.returnToStartingPosition(this.cities[0]);
     });
 
+    this.isBasicSolutionDisplay = true;
     this.logRoutesAfterBaseSolution();
 
 

@@ -5,6 +5,8 @@ import { DistanceCalculatorService } from "../services/distance-calculator.servi
 
 export class Vehicle{
 
+    private static vehicleCounter = 1;
+    public name : string = "";
     public startingPosition : Coordinate = {
         xCoord : 0,
         yCoord : 0,
@@ -18,7 +20,9 @@ export class Vehicle{
 
     private readonly distanceCalculatorSerice : DistanceCalculatorService = new DistanceCalculatorService();
 
-    constructor( ){}
+    constructor( ){
+        this.name= "Vehicle_"+Vehicle.vehicleCounter++;
+    }
 
     public setStartingPosition(city : City){
         this.startingPosition = city.coordinates;

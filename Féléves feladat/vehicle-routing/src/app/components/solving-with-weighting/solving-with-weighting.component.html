@@ -1,7 +1,7 @@
 <section id="citiesTableSection" *ngIf="cities.length > 0">
     <h4>Destinations</h4>
     <br>
-    <table>
+    <table id="citiesTable">
         <thead>
             <tr>
                 <td>City</td>
@@ -39,3 +39,21 @@
 <div *ngIf="cities.length > 0">
     <button id="solutionButton" (click)="getBaseSolution()">Generate a base solution</button>
 </div>
+
+<br><br>
+
+<div *ngIf="isBasicSolutionDisplay">
+    <h4>Calculated base solution</h4>
+    <br><br>
+    <article *ngFor="let vehicle of vehicles">
+                {{vehicle.name}} &nbsp;
+                <span *ngFor="let place of vehicle.visitedPlaces">
+                     > {{place.name}}
+                </span>
+                <p>Distnace taken : {{vehicle.distanceTaken}}</p>
+                <br><br>
+                
+    </article>
+       
+</div>
+<app-genetic-algorithm></app-genetic-algorithm>

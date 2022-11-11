@@ -20,22 +20,23 @@ export class Vehicle{
 
     constructor( ){}
 
-    public move(city : City, distance : number) : void{
-        this.position.xCoord = city.coordinates.xCoord;
-        this.position.yCoord = city.coordinates.yCoord;
-        this.distanceTaken += distance;
+    public setStartingPosition(city : City){
+        this.startingPosition = city.coordinates;
         this.visitedPlaces.push(city);
     };
 
-    public getClosestLocation() : number[]{
-
-        return [];
+    public move(city : City) : void{
+        this.position.xCoord = city.coordinates.xCoord;
+        this.position.yCoord = city.coordinates.yCoord;
+        this.distanceTaken += this.distanceCalculatorSerice.calculateDistance(this.position,city.coordinates);
+        this.visitedPlaces.push(city);
     };
 
-    public returnToStartingPosition() : void{
-        const distance : number = this.distanceCalculatorSerice.calculateDistance(this.position,this.startingPosition);
+    public returnToStartingPosition(city : City) : void{
+        const distance : number = this.distanceCalculatorSerice.calculateDistance(this.position,city.coordinates);
         this.distanceTaken += distance;
-        this.position = this.startingPosition;
-    }
+        this.position = city.coordinates;
+        this.visitedPlaces.push(city);
+    };
     
 }

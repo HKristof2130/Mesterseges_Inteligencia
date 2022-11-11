@@ -75,14 +75,16 @@ export class SolvingWithWeightingComponent implements OnInit {
 
   public getBaseSolution() {
     
-    this._putVehiclesToStartingPosition();
+    this._putVehiclesToStartingPosition(this.cities[0]);
 
-    this.cities.forEach( (city : City) => {
+    for(let i = 1; i < this.cities.length; i++) {
       
+      const city : City = this.cities[i];
       let lowestDistance : number = Number.POSITIVE_INFINITY;
       let chosenVehiclesIndex : number = -1;
 
       for( let i = 0; i < this.vehicles.length; i++){
+
         const distance : number = this.distanceCalculatorSerivce.calculateDistance(this.vehicles[i].position, city.coordinates);
 
         if( distance < lowestDistance){
@@ -91,12 +93,12 @@ export class SolvingWithWeightingComponent implements OnInit {
         }
       }
 
-      this.vehicles[chosenVehiclesIndex].move(city, lowestDistance);
+      this.vehicles[chosenVehiclesIndex].move(city);
 
-    });
+    };
 
     this.vehicles.forEach(vehicle => {
-      vehicle.returnToStartingPosition();
+      vehicle.returnToStartingPosition(this.cities[0]);
     });
 
     this.logRoutesAfterBaseSolution();
@@ -104,9 +106,9 @@ export class SolvingWithWeightingComponent implements OnInit {
 
   }
 
-  private _putVehiclesToStartingPosition() : void{
+  private _putVehiclesToStartingPosition(city : City) : void{
     this.vehicles.forEach( (vehicle : Vehicle) => {
-      vehicle.startingPosition = this.destinationGeneratorService.destinations.get(0)?.coordinates as Coordinate;
+      vehicle.setStartingPosition(city);
     });
   }
 

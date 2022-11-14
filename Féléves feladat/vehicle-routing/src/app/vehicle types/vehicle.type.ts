@@ -25,15 +25,12 @@ export class Vehicle{
         this.visitedPlaces.splice(0,this.visitedPlaces.length);
     }
 
-    public setStartingPosition(city : City){
-        this.startingPosition = city.coordinates;
-        this.visitedPlaces.push(city);
-    };
-
     public move(city : City) : void{
+        console.log(`${this.name} moving to `, city);
+        
+        this.distanceTaken += this.distanceCalculatorSerice.calculateDistance(this.position,city.coordinates);
         this.position.xCoord = city.coordinates.xCoord;
         this.position.yCoord = city.coordinates.yCoord;
-        this.distanceTaken += this.distanceCalculatorSerice.calculateDistance(this.position,city.coordinates);
         this.visitedPlaces.push(city);
     };
 

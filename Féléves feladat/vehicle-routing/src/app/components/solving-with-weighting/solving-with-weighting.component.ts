@@ -17,9 +17,11 @@ export class SolvingWithWeightingComponent implements OnInit {
     amountOfDestinationsInEachQuadrant : ["",Validators.required],
     amountOfVehicles: ["", Validators.required],
   });
-  public isBasicSolutionDisplay : boolean = false;
-  public cities : Array<City> = [];
+  public isBasicSolutionDisplayed : boolean = false;
+  public cities : City[] = [];
   public vehicles : Vehicle[] = [];
+
+  public baseSolution : Vehicle[] = [];
 
   constructor( private readonly destinationGeneratorService : DestinatonsGeneratorService,
                private readonly vehicleGeneratorService : VehicleGeneratorService,
@@ -40,7 +42,7 @@ export class SolvingWithWeightingComponent implements OnInit {
 
   public generateDestinationsAndVehicles(){
     
-    this.isBasicSolutionDisplay = false;
+    this.isBasicSolutionDisplayed = false;
     if(! this._isFormValid()){
       alert("Stg wrong with the inputs");
       return;
@@ -48,11 +50,13 @@ export class SolvingWithWeightingComponent implements OnInit {
 
     this.destinationGeneratorService.generateDestinations(this.formDestinationAmount?.value);
     this.cities.splice(0,this.cities.length)
-    this.cities = this.getGeneratedCities();
-    this.destinationGeneratorService.printOutDestinations();
+    this.cities = this.destinationGeneratorService.getGeneratedCities();
+    
+    //this.destinationGeneratorService.printOutDestinations();
 
     this.vehicleGeneratorService.addVehicles(this.formVehiclesAmount?.value);
     this.vehicles = this.vehicleGeneratorService.vehicles;
+    
     this.vehicleGeneratorService.printOutVehicles();
   }
 
@@ -64,45 +68,50 @@ export class SolvingWithWeightingComponent implements OnInit {
     return true;
   }
 
-  private getGeneratedCities() : Array<City> {
-
-    const tmpCities : Array<City>= [];
-    for(let i = 0 ; i < this.destinationGeneratorService.destinations.size; i++){
-      tmpCities.push( this.destinationGeneratorService.destinations.get(i) as City);
-    }
-
-    return tmpCities;
-  }
-
   public getBaseSolution() {
     
     this._putVehiclesToStartingPosition(this.cities[0]);
 
+    console.log(this.vehicles);
+    
+
     for(let i = 1; i < this.cities.length; i++) {
       
+      
+      
       const city : City = this.cities[i];
+      
+      
       let lowestDistance : number = Number.POSITIVE_INFINITY;
       let chosenVehiclesIndex : number = -1;
 
-      for( let i = 0; i < this.vehicles.length; i++){
+      console.log(city);
 
-        const distance : number = this.distanceCalculatorSerivce.calculateDistance(this.vehicles[i].position, city.coordinates);
+  
+
+      for( let j = 0; j < this.vehicles.length; j++){
+        const distance : number = this.distanceCalculatorSerivce.calculateDistance(this.vehicles[j].position, city.coordinates);
 
         if( distance < lowestDistance){
           lowestDistance = distance;
-          chosenVehiclesIndex = i;
+          chosenVehiclesIndex = j;
         }
-      }
+      };
 
+      console.log(this.vehicles[chosenVehiclesIndex], lowestDistance);
+      
+      
       this.vehicles[chosenVehiclesIndex].move(city);
 
+      console.log("");
+      
     };
 
     this.vehicles.forEach(vehicle => {
       vehicle.returnToStartingPosition(this.cities[0]);
     });
 
-    this.isBasicSolutionDisplay = true;
+    this.isBasicSolutionDisplayed = true;
     this.logRoutesAfterBaseSolution();
 
 

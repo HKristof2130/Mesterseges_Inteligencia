@@ -21,7 +21,8 @@ export class Vehicle{
     private readonly distanceCalculatorSerice : DistanceCalculatorService = new DistanceCalculatorService();
 
     constructor( ){
-        this.name= "Vehicle_"+Vehicle.vehicleCounter++;
+        this.name= "Vehicle_" + Vehicle.vehicleCounter++;
+        this.visitedPlaces.splice(0,this.visitedPlaces.length);
     }
 
     public setStartingPosition(city : City){

@@ -15,6 +15,7 @@ export class VehicleGeneratorService {
 
   public addVehicles(amount : number){
     this._vehicles.splice(0,this._vehicles.length);
+    
     for(let i = 0 ; i < amount ; i++){
       this._vehicles.push( new Vehicle());
     }

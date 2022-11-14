@@ -42,7 +42,7 @@
 
 <br><br>
 
-<div *ngIf="isBasicSolutionDisplay">
+<div *ngIf="isBasicSolutionDisplayed">
     <h4>Calculated base solution</h4>
     <br><br>
     <article *ngFor="let vehicle of vehicles">
@@ -56,4 +56,4 @@
     </article>
        
 </div>
-<app-genetic-algorithm></app-genetic-algorithm>
+<app-genetic-algorithm [baseSolution]="vehicles" [baseSolutionGenerated]="isBasicSolutionDisplayed"></app-genetic-algorithm>

@@ -54,6 +54,13 @@
                 <br><br>
                 
     </article>
+    <br>
+    <h5>Average distance per vehicle: {{avgDistance}}</h5>
        
+</div>
+
+<div class="chartDiv" *ngIf="isBasicSolutionDisplayed">
+    <canvas baseChart [datasets]="chartData" [labels]="chartLabels" [options]="chartOptions" [legend]="chartLegend"
+    [plugins]="chartPlugins" [type]="chartType"></canvas>
 </div>
 <app-genetic-algorithm [baseSolution]="vehicles" [baseSolutionGenerated]="isBasicSolutionDisplayed"></app-genetic-algorithm>

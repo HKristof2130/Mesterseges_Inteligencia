@@ -1,1 +1,24 @@
-<p>genetic-algorithm works!</p>
+<br>
+<section *ngIf="solutionForGeneticAlgorithm.length > 0">
+    <input type="number" #generations placeholder="how many generations do you want to generate">
+    <button type="button" (click)="generateGenerations(+generations.value)">Generate</button>
+</section>
+
+<div *ngIf="showChart">
+    <h4>Best solution by genetic algorithm</h4>
+    <br>
+    <article *ngFor="let vehicle of bestSolution">
+        {{vehicle.name}} &nbsp;
+        <span *ngFor="let place of vehicle.visitedPlaces">
+            > {{place.name}}
+        </span>
+        <p>Distnace taken : {{vehicle.distanceTaken}}</p>
+        <br><br>
+
+    </article>
+    <br>
+    <h5>Average distance per vehicle: {{averageDistance}}</h5>
+
+    <canvas class="chartDiv" baseChart [datasets]="chartData" [labels]="chartLabels" [options]="chartOptions" [legend]="chartLegend"
+        [plugins]="chartPlugins" [type]="chartType"></canvas>
+</div>

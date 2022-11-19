@@ -26,7 +26,6 @@ export class Vehicle{
     }
 
     public move(city : City) : void{
-        console.log(`${this.name} moving to `, city);
         
         this.distanceTaken += this.distanceCalculatorSerice.calculateDistance(this.position,city.coordinates);
         this.position.xCoord = city.coordinates.xCoord;

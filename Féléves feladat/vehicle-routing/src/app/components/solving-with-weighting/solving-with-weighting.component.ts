@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
+import { ChartDataset, ChartOptions, ChartType } from 'chart.js';
 import { City } from 'src/app/city-type/city.type';
 import { DistanceCalculatorService } from 'src/app/services/distance-calculator.service';
 import { DestinatonsGeneratorService } from 'src/app/services/route-generator.service';
@@ -17,11 +18,33 @@ export class SolvingWithWeightingComponent implements OnInit {
     amountOfDestinationsInEachQuadrant: ["", Validators.required],
     amountOfVehicles: ["", Validators.required],
   });
+
   public isBasicSolutionDisplayed: boolean = false;
   public cities: City[] = [];
   public vehicles: Vehicle[] = [];
+  public avgDistance : number = 0;
 
-  public baseSolution: Vehicle[] = [];
+  chartData: ChartDataset[] = [];
+  chartLabels: string[] = [];
+  chartType: ChartType = 'scatter';
+  chartLegend: boolean = true;
+  chartPlugins = [];
+  chartOptions: ChartOptions = {
+    scales: {
+      x: {
+        type: 'linear',
+        position: 'bottom',
+        beginAtZero: true,
+        max: 100,
+        min : -100
+      },
+      y: {
+        beginAtZero: true,
+        max: 100,
+        min : -100
+      }
+    }
+  };
 
   constructor(private readonly destinationGeneratorService: DestinatonsGeneratorService,
     private readonly vehicleGeneratorService: VehicleGeneratorService,
@@ -29,16 +52,29 @@ export class SolvingWithWeightingComponent implements OnInit {
     private readonly distanceCalculatorSerivce: DistanceCalculatorService) { }
 
   ngOnInit(): void {
+    this.chartData.push({
+      label: "Depo",
+      data: [{ x: 0, y: 0 }],
+      borderColor: 'red',
+      borderWidth: 1,
+      pointBackgroundColor: 'red',
+      pointBorderColor: 'red',
+      pointRadius: 8,
+      pointHoverRadius: 8,
+      fill: true,
+      tension: 10,
+      showLine: true
+    });
 
   }
 
   public get formDestinationAmount(): AbstractControl<any, any> | null {
     return this.amountsForm.get("amountOfDestinationsInEachQuadrant");
-  }
+  };
 
   public get formVehiclesAmount(): AbstractControl<any, any> | null {
     return this.amountsForm.get("amountOfVehicles");
-  }
+  };
 
   public generateDestinationsAndVehicles() {
 
@@ -46,7 +82,7 @@ export class SolvingWithWeightingComponent implements OnInit {
     if (!this._isFormValid()) {
       alert("Stg wrong with the inputs");
       return;
-    }
+    };
 
     this.destinationGeneratorService.generateDestinations(this.formDestinationAmount?.value);
     this.cities.splice(0, this.cities.length)
@@ -58,7 +94,9 @@ export class SolvingWithWeightingComponent implements OnInit {
     this.vehicles = this.vehicleGeneratorService.vehicles;
 
     this.vehicleGeneratorService.printOutVehicles();
-  }
+
+
+  };
 
   private _isFormValid(): boolean {
     if (!this.formDestinationAmount?.valid || !this.formVehiclesAmount?.valid) {
@@ -66,15 +104,16 @@ export class SolvingWithWeightingComponent implements OnInit {
     }
 
     return true;
-  }
+  };
 
   public getBaseSolution() {
 
     this._putVehiclesToStartingPosition(this.cities[0]);
 
-    console.log(this.vehicles);
+    const afterStartingPos = this.vehicles;
+    
     const vehiclesBeforeStart: Vehicle[] = [...this.vehicles];
-    console.log(vehiclesBeforeStart);
+    
 
 
 
@@ -95,14 +134,7 @@ export class SolvingWithWeightingComponent implements OnInit {
         }
       };
 
-      console.log(lowestDistance, chosenVehiclesIndex);
-
-      console.log(this.vehicles[chosenVehiclesIndex], lowestDistance);
-
-
       this.vehicles[chosenVehiclesIndex].move(city);
-
-      console.log("");
 
     };
 
@@ -111,25 +143,56 @@ export class SolvingWithWeightingComponent implements OnInit {
       vehicle.returnToStartingPosition(this.cities[0]);
     });
     
+    
+
+    this.avgDistance = this.distanceCalculatorSerivce.calculateAverageDistance(this.vehicles);    
+
+    this.vehicles.forEach(vehicle => {
+      let r = Math.floor(Math.random() * 255);
+      let g = Math.floor(Math.random() * 255);
+      let b = Math.floor(Math.random() * 255);
+      let color = "rgb(" + r + "," + g + "," + b + ")";
+      this.chartData.push({
+        label: vehicle.name,
+        data: [
+          ...vehicle.visitedPlaces.map(city => ({ x: city.coordinates.xCoord, y: city.coordinates.yCoord }))
+        ],
+        borderColor: color,
+        borderWidth: 1,
+        pointBackgroundColor: color,
+        pointBorderColor: color,
+        pointRadius: 3,
+        pointHoverRadius: 4,
+        tension: 0,
+        showLine: true
+      })
+    });
+
+    this._logRoutesAfterBaseSolution();
     this.isBasicSolutionDisplayed = true;
-    this.logRoutesAfterBaseSolution();
 
 
-  }
+  };
 
   private _putVehiclesToStartingPosition(city: City): void {
     this.vehicles.forEach((vehicle: Vehicle) => {
       vehicle.visitedPlaces.push(city);
     });
-  }
+  };
 
-  private logRoutesAfterBaseSolution(): void {
+  private _logRoutesAfterBaseSolution(): void {
     console.log("Finished with base solution");
 
-    this.vehicles.forEach(vehicle => {
-      console.log(vehicle);
-
+    const afterBase : Vehicle[] = [...this.vehicles];
+    
+    afterBase.forEach(ab => {
+      console.log(ab.name);
+      
+      ab.visitedPlaces.forEach(vp => {
+        console.log(vp);
+        
+      });
     });
-  }
+  };
 
 }

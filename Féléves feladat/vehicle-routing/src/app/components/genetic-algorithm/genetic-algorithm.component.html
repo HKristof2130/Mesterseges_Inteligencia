@@ -37,13 +37,13 @@
             <table *ngIf="showTestResults">
                 <thead>
                     <tr>
-                        <td>Number of Generations</td>
-                        <td>Average distnace per vehicle</td>
+                        <td>Number of Generations</td>&nbsp;
+                        <td> Lowest average distnace per vehicle</td>
                     </tr>
                 </thead>
                 <tbody>
                     <tr *ngFor="let result of testResults">
-                        <td>{{result.numberOfGenerations}}</td>
+                        <td>{{result.numberOfGenerations}}</td>&nbsp;
                         <td>{{result.averageDistance}}</td>
                     </tr>
                 </tbody>

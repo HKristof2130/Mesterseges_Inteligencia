@@ -19,7 +19,10 @@ export class GeneticAlgorithmComponent implements OnChanges, OnInit {
   public solutionForGeneticAlgorithm: Vehicle[] = [];
   public bestSolution: Vehicle[] = [];
   public showChart: boolean = false;
-  public averageDistance: number = 0;
+  public averageDistance: number = Number.POSITIVE_INFINITY;
+  public numberOfGenerationsForTesting : number[] = [];
+  public testResults : Test[] = [];
+  public showTestResults : boolean = false;
 
 
 
@@ -54,7 +57,6 @@ export class GeneticAlgorithmComponent implements OnChanges, OnInit {
       console.log("Show genetic alg");
       this.solutionForGeneticAlgorithm = [...this.baseSolution];
       this.bestSolution = [...this.solutionForGeneticAlgorithm];
-      this.averageDistance = this.distanceCalculatorService.calculateAverageDistance(this.solutionForGeneticAlgorithm);
     }
 
   }
@@ -67,14 +69,14 @@ export class GeneticAlgorithmComponent implements OnChanges, OnInit {
     
 
     for (let i = 0; i < generations; i++) {
-      this._createGenerations();
+      this._fitnessMethod();
       const avgDist: number = this.distanceCalculatorService.calculateAverageDistance(this.solutionForGeneticAlgorithm);
 
       if (avgDist < this.averageDistance) {
         this.bestSolution = [...this.solutionForGeneticAlgorithm];
         this.averageDistance = avgDist;
       }
-    }
+    };
 
     this.chartData.push({
       label: "Depo",
@@ -112,9 +114,39 @@ export class GeneticAlgorithmComponent implements OnChanges, OnInit {
     });
 
     this.showChart = true;
+  };
+
+  
+  public addToGenerationsArray(generations : number){
+    this.numberOfGenerationsForTesting.push(generations);
   }
 
-  private _createGenerations() {
+
+  public breedGenerations() : void{
+    this.numberOfGenerationsForTesting.forEach(gen => {
+      let avgDistForGivenGeneration : number = Number.POSITIVE_INFINITY;
+      this.solutionForGeneticAlgorithm = [...this.baseSolution];
+      for (let i = 0; i < gen; i++) {
+        this._fitnessMethod();
+        const avgDist: number = this.distanceCalculatorService.calculateAverageDistance(this.solutionForGeneticAlgorithm);
+  
+        if (avgDist < avgDistForGivenGeneration) {
+          this.bestSolution = [...this.solutionForGeneticAlgorithm];
+          avgDistForGivenGeneration = avgDist;
+        }
+      };
+
+      this.testResults.push({
+        numberOfGenerations : gen,
+        averageDistance : avgDistForGivenGeneration
+      });
+
+    });
+
+    this.showTestResults = true;
+  };
+
+  private _fitnessMethod() {
 
 
     this._shuffleDestinationsBetweenVehicleRoutes();
@@ -249,3 +281,8 @@ export class GeneticAlgorithmComponent implements OnChanges, OnInit {
   };
 
 }
+
+type Test = {
+  numberOfGenerations: number,
+  averageDistance : number,
+};

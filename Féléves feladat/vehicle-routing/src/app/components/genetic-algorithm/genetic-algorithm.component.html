@@ -20,5 +20,36 @@
     <h5>Average distance per vehicle: {{averageDistance}}</h5>
 
     <canvas class="chartDiv" baseChart [datasets]="chartData" [labels]="chartLabels" [options]="chartOptions" [legend]="chartLegend"
-        [plugins]="chartPlugins" [type]="chartType"></canvas>
+        [plugins]="chartPlugins" [type]="chartType">
+    </canvas>
+    <br><br>
+    <section>
+        <h4>Add some number of generations for testing</h4>
+        <input type="number" #numberOfGenerations>
+        <button (click)="addToGenerationsArray(+numberOfGenerations.value)">Add</button><br>
+        <div *ngIf="numberOfGenerationsForTesting.length > 0">
+            <span *ngFor="let gen of numberOfGenerationsForTesting" >
+                {{gen}}, &nbsp;
+            </span>
+            <br>
+            <button (click)="breedGenerations()">Test</button>
+            <br><br>
+            <table *ngIf="showTestResults">
+                <thead>
+                    <tr>
+                        <td>Number of Generations</td>&nbsp;
+                        <td> Lowest average distnace per vehicle</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let result of testResults">
+                        <td>{{result.numberOfGenerations}}</td>&nbsp;
+                        <td>{{result.averageDistance}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+    </section>
+    
 </div>

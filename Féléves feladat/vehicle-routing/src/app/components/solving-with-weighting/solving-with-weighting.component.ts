@@ -22,6 +22,7 @@ export class SolvingWithWeightingComponent implements OnInit {
   public isBasicSolutionDisplayed: boolean = false;
   public cities: City[] = [];
   public vehicles: Vehicle[] = [];
+  public baseSolution : Vehicle[] = [];
   public avgDistance : number = 0;
 
   chartData: ChartDataset[] = [];
@@ -109,10 +110,6 @@ export class SolvingWithWeightingComponent implements OnInit {
   public getBaseSolution() {
 
     this._putVehiclesToStartingPosition(this.cities[0]);
-
-    const afterStartingPos = this.vehicles;
-    
-    const vehiclesBeforeStart: Vehicle[] = [...this.vehicles];
     
 
 
@@ -143,10 +140,6 @@ export class SolvingWithWeightingComponent implements OnInit {
       vehicle.returnToStartingPosition(this.cities[0]);
     });
     
-    
-
-    this.avgDistance = this.distanceCalculatorSerivce.calculateAverageDistance(this.vehicles);    
-
     this.vehicles.forEach(vehicle => {
       let r = Math.floor(Math.random() * 255);
       let g = Math.floor(Math.random() * 255);
@@ -169,6 +162,8 @@ export class SolvingWithWeightingComponent implements OnInit {
     });
 
     this._logRoutesAfterBaseSolution();
+    this.baseSolution = this.vehicles;
+    this.avgDistance = this.avgDistance = this.distanceCalculatorSerivce.calculateAverageDistance(this.baseSolution);    
     this.isBasicSolutionDisplayed = true;
 
 

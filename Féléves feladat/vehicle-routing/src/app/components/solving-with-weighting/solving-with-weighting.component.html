@@ -43,11 +43,24 @@
 <br><br>
 
 <div *ngIf="isBasicSolutionDisplayed">
+    <div *ngFor="let vehicle of vehicles">
+        {{vehicle.name}} travelled {{vehicle.distanceTaken}}
+    </div>
     <h5>Average distance per vehicle: {{avgDistance}}</h5>
 </div>
 
 <div class="chartDiv" *ngIf="isBasicSolutionDisplayed">
     <canvas baseChart [datasets]="chartData" [labels]="chartLabels" [options]="chartOptions" [legend]="chartLegend"
-    [plugins]="chartPlugins" [type]="chartType"></canvas>
+        [plugins]="chartPlugins" [type]="chartType"></canvas>
 </div>
-<app-genetic-algorithm [baseSolution]="vehicles" [baseSolutionGenerated]="isBasicSolutionDisplayed" [baseAvgDistance]="avgDistance"></app-genetic-algorithm>
+
+<div *ngIf="gotBetterSolution">
+    <app-genetic-algorithm [baseSolution]="vehicles" [baseSolutionGenerated]="isBasicSolutionDisplayed"
+        [baseAvgDistance]="avgDistance" (gotBetterSolution)="isThereABetterSolution($event)"></app-genetic-algorithm>
+</div>
+<br><br>
+<div *ngIf="!gotBetterSolution" class="chartDiv">
+    <h4>Didn't get a better soluiton with genetic algorithm</h4>
+    <canvas baseChart [datasets]="chartData" [labels]="chartLabels" [options]="chartOptions" [legend]="chartLegend"
+        [plugins]="chartPlugins" [type]="chartType"></canvas>
+</div>

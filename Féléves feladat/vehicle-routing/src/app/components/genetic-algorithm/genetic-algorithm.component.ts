@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ChartDataset, ChartOptions, ChartType } from 'chart.js';
 import { City } from 'src/app/city-type/city.type';
@@ -15,6 +15,7 @@ export class GeneticAlgorithmComponent implements OnChanges, OnInit {
   @Input() baseSolution: Vehicle[] = [];
   @Input() baseAvgDistance : number = 0;
   @Input() baseSolutionGenerated: boolean = false;
+  @Output() gotBetterSolution : EventEmitter<boolean> = new EventEmitter<boolean>();
 
   public solutionForGeneticAlgorithm: Vehicle[] = [];
   public bestSolution: Vehicle[] = [];
@@ -56,7 +57,7 @@ export class GeneticAlgorithmComponent implements OnChanges, OnInit {
     if (this.baseSolution.length > 0 && this.baseSolutionGenerated) {
       console.log("Show genetic alg");
       this.solutionForGeneticAlgorithm = [...this.baseSolution];
-      this.bestSolution = [...this.solutionForGeneticAlgorithm];
+      this.bestSolution = [...this.baseSolution];
     }
 
   }
@@ -66,15 +67,19 @@ export class GeneticAlgorithmComponent implements OnChanges, OnInit {
 
   public generateGenerations(generations: number): void {
 
-    let generationsWatcher : number = 25;
+    
 
     for (let i = 0; i < generations; i++) {
+
       this._fitnessMethod();
       const avgDist: number = this.distanceCalculatorService.calculateAverageDistance(this.solutionForGeneticAlgorithm);
 
-      if (avgDist < this.averageDistance) {
+      if (avgDist !< this.averageDistance) {
+        this.solutionForGeneticAlgorithm = [...this.bestSolution];
+        this.averageDistance = this.distanceCalculatorService.calculateAverageDistance(this.solutionForGeneticAlgorithm);
+      }else{
         this.bestSolution = [...this.solutionForGeneticAlgorithm];
-        this.averageDistance = avgDist;
+        this.averageDistance = this.distanceCalculatorService.calculateAverageDistance(this.bestSolution);
       }
     };
 
@@ -92,26 +97,34 @@ export class GeneticAlgorithmComponent implements OnChanges, OnInit {
       showLine: true
     });
 
-    this.bestSolution.forEach(sol => {
-      let r = Math.floor(Math.random() * 255);
-      let g = Math.floor(Math.random() * 255);
-      let b = Math.floor(Math.random() * 255);
-      let color = "rgb(" + r + "," + g + "," + b + ")";
-      this.chartData.push({
-        label: sol.name,
-        data: [
-          ...sol.visitedPlaces.map(city => ({ x: city.coordinates.xCoord, y: city.coordinates.yCoord }))
-        ],
-        borderColor: color,
-        borderWidth: 1,
-        pointBackgroundColor: color,
-        pointBorderColor: color,
-        pointRadius: 3,
-        pointHoverRadius: 4,
-        tension: 0,
-        showLine: true
-      })
-    });
+    if(this.averageDistance > this.baseAvgDistance){
+        this.gotBetterSolution.emit(false);
+    }else{
+      this.bestSolution.forEach(sol => {
+        let r = Math.floor(Math.random() * 255);
+        let g = Math.floor(Math.random() * 255);
+        let b = Math.floor(Math.random() * 255);
+        let color = "rgb(" + r + "," + g + "," + b + ")";
+        this.chartData.push({
+          label: sol.name,
+          data: [
+            ...sol.visitedPlaces.map(city => ({ x: city.coordinates.xCoord, y: city.coordinates.yCoord }))
+          ],
+          borderColor: color,
+          borderWidth: 1,
+          pointBackgroundColor: color,
+          pointBorderColor: color,
+          pointRadius: 3,
+          pointHoverRadius: 4,
+          tension: 0,
+          showLine: true
+        })
+      });
+    }
+
+    
+
+    
 
     this.showChart = true;
   };
@@ -122,7 +135,7 @@ export class GeneticAlgorithmComponent implements OnChanges, OnInit {
   }
 
 
-  public breedGenerations() : void{
+  async breedGenerations() : Promise<void>{
     this.numberOfGenerationsForTesting.forEach(gen => {
       let avgDistForGivenGeneration : number = Number.POSITIVE_INFINITY;
       this.solutionForGeneticAlgorithm = [...this.baseSolution];

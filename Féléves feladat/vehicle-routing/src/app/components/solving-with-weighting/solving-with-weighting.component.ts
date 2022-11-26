@@ -24,6 +24,7 @@ export class SolvingWithWeightingComponent implements OnInit {
   public vehicles: Vehicle[] = [];
   public baseSolution : Vehicle[] = [];
   public avgDistance : number = 0;
+  public gotBetterSolution : boolean = true;
 
   chartData: ChartDataset[] = [];
   chartLabels: string[] = [];
@@ -189,5 +190,9 @@ export class SolvingWithWeightingComponent implements OnInit {
       });
     });
   };
+
+  isThereABetterSolution($event : boolean){
+    this.gotBetterSolution = $event;
+  }
 
 }

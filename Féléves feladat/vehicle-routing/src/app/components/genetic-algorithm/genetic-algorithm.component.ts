@@ -1,7 +1,6 @@
-import { Component, Input, OnChanges, OnInit, SimpleChange, SimpleChanges } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ChartDataset, ChartOptions, ChartType } from 'chart.js';
-import { min } from 'rxjs';
 import { City } from 'src/app/city-type/city.type';
 import { DistanceCalculatorService } from 'src/app/services/distance-calculator.service';
 import { Vehicle } from 'src/app/vehicle types/vehicle.type';
@@ -14,6 +13,7 @@ import { Vehicle } from 'src/app/vehicle types/vehicle.type';
 export class GeneticAlgorithmComponent implements OnChanges, OnInit {
 
   @Input() baseSolution: Vehicle[] = [];
+  @Input() baseAvgDistance : number = 0;
   @Input() baseSolutionGenerated: boolean = false;
 
   public solutionForGeneticAlgorithm: Vehicle[] = [];
@@ -64,9 +64,16 @@ export class GeneticAlgorithmComponent implements OnChanges, OnInit {
 
   public generateGenerations(generations: number): void {
 
-    
+    let generationsWatcher : number = 25;
 
     for (let i = 0; i < generations; i++) {
+
+      if( this._whatPercentOf(i,generations)  >= generationsWatcher && this.averageDistance !> this.baseAvgDistance){
+        generationsWatcher += 25;
+        this.solutionForGeneticAlgorithm =  [...this.baseSolution];
+        this.averageDistance = this.baseAvgDistance;
+      }
+
       this._createGenerations();
       const avgDist: number = this.distanceCalculatorService.calculateAverageDistance(this.solutionForGeneticAlgorithm);
 
@@ -74,6 +81,11 @@ export class GeneticAlgorithmComponent implements OnChanges, OnInit {
         this.bestSolution = [...this.solutionForGeneticAlgorithm];
         this.averageDistance = avgDist;
       }
+    }
+
+    if(this.averageDistance > this.baseAvgDistance){
+      this.bestSolution = [...this.baseSolution];
+      this.averageDistance = this.baseAvgDistance;
     }
 
     this.chartData.push({
@@ -248,4 +260,10 @@ export class GeneticAlgorithmComponent implements OnChanges, OnInit {
     });
   };
 
+  private _whatPercentOf(numA : number, numB : number) : number{
+    return (numA / numB) * 100;
+  }
+
 }
+
+

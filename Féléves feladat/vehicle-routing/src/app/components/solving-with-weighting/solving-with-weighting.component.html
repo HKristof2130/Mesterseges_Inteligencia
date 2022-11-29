@@ -43,9 +43,6 @@
 <br><br>
 
 <div *ngIf="isBasicSolutionDisplayed">
-    <div *ngFor="let vehicle of vehicles">
-        {{vehicle.name}} travelled {{vehicle.distanceTaken}}
-    </div>
     <h5>Average distance per vehicle: {{avgDistance}}</h5>
 </div>
 
@@ -54,13 +51,31 @@
         [plugins]="chartPlugins" [type]="chartType"></canvas>
 </div>
 
+<br><br>
+
 <div *ngIf="gotBetterSolution">
     <app-genetic-algorithm [baseSolution]="vehicles" [baseSolutionGenerated]="isBasicSolutionDisplayed"
-        [baseAvgDistance]="avgDistance" (gotBetterSolution)="isThereABetterSolution($event)"></app-genetic-algorithm>
+        [baseAvgDistance]="avgDistance" (gotBetterSolution)="isThereABetterSolution($event)" (testsToParentComp)="getTestResults($event)"></app-genetic-algorithm>
 </div>
-<br><br>
+
 <div *ngIf="!gotBetterSolution" class="chartDiv">
     <h4>Didn't get a better soluiton with genetic algorithm</h4>
     <canvas baseChart [datasets]="chartData" [labels]="chartLabels" [options]="chartOptions" [legend]="chartLegend"
         [plugins]="chartPlugins" [type]="chartType"></canvas>
+        <br><br>
+        <table>
+            <thead>
+                <tr>
+                    <td>Number of Generations</td>&nbsp;
+                    <td> Lowest average distnace per vehicle</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let test of tests">
+                    <td>{{test.numberOfGenerations}}</td>&nbsp;
+                    <td>{{test.averageDistance}}</td>
+                </tr>
+            </tbody>
+        </table>
 </div>
+

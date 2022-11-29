@@ -16,7 +16,7 @@ export class GeneticAlgorithmComponent implements OnChanges, OnInit {
   @Input() baseAvgDistance : number = 0;
   @Input() baseSolutionGenerated: boolean = false;
   @Output() gotBetterSolution : EventEmitter<boolean> = new EventEmitter<boolean>();
-
+  @Output() testsToParentComp : EventEmitter<Test[]> = new EventEmitter<Test[]>();
   public solutionForGeneticAlgorithm: Vehicle[] = [];
   public bestSolution: Vehicle[] = [];
   public showChart: boolean = false;
@@ -99,6 +99,8 @@ export class GeneticAlgorithmComponent implements OnChanges, OnInit {
 
     if(this.averageDistance > this.baseAvgDistance){
         this.gotBetterSolution.emit(false);
+        this.numberOfGenerationsForTesting = [10,50,100,200,300,400,500,1000,1500,2000,2500];
+        this.breedGenerations();
     }else{
       this.bestSolution.forEach(sol => {
         let r = Math.floor(Math.random() * 255);
@@ -121,10 +123,6 @@ export class GeneticAlgorithmComponent implements OnChanges, OnInit {
         })
       });
     }
-
-    
-
-    
 
     this.showChart = true;
   };
@@ -157,6 +155,8 @@ export class GeneticAlgorithmComponent implements OnChanges, OnInit {
     });
 
     this.showTestResults = true;
+
+    this.testsToParentComp.emit(this.testResults);
   };
 
   private _fitnessMethod() {
@@ -299,7 +299,7 @@ export class GeneticAlgorithmComponent implements OnChanges, OnInit {
 
 }
 
-type Test = {
+export type Test = {
   numberOfGenerations: number,
   averageDistance : number,
 };

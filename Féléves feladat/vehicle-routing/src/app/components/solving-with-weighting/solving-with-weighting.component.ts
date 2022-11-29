@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { TestBed } from '@angular/core/testing';
 import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { ChartDataset, ChartOptions, ChartType } from 'chart.js';
 import { City } from 'src/app/city-type/city.type';
@@ -6,6 +7,7 @@ import { DistanceCalculatorService } from 'src/app/services/distance-calculator.
 import { DestinatonsGeneratorService } from 'src/app/services/route-generator.service';
 import { VehicleGeneratorService } from 'src/app/services/vehicle-generator.service';
 import { Vehicle } from 'src/app/vehicle types/vehicle.type';
+import { Test } from '../genetic-algorithm/genetic-algorithm.component';
 
 @Component({
   selector: 'app-solving-with-weighting',
@@ -25,6 +27,7 @@ export class SolvingWithWeightingComponent implements OnInit {
   public baseSolution : Vehicle[] = [];
   public avgDistance : number = 0;
   public gotBetterSolution : boolean = true;
+  public tests : Test[] = [];
 
   chartData: ChartDataset[] = [];
   chartLabels: string[] = [];
@@ -99,6 +102,10 @@ export class SolvingWithWeightingComponent implements OnInit {
 
 
   };
+
+  public getTestResults($event : Test[]){
+    this.tests = $event;
+  }
 
   private _isFormValid(): boolean {
     if (!this.formDestinationAmount?.valid || !this.formVehiclesAmount?.valid) {
